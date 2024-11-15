@@ -1,4 +1,4 @@
-import  { compileString }  from "squint-cljs/lib/compiler.node.js"
+import  { compileString }  from "./node_modules/squint-cljs/lib/compiler.node.js"
 import path, { dirname } from "path";
 import fs from "fs";
 
