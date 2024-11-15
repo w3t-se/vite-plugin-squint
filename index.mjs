@@ -1,4 +1,4 @@
-import { compileString } from "squint-cljs";
+import  { compileString }  from "squint-cljs/lib/compiler.node.js"
 import path, { dirname } from "path";
 import fs from "fs";
 
@@ -12,10 +12,12 @@ export default function viteSquint(opts = {}) {
         // for cljs files, we just need to load and compile
         // TODO: macros
         // TODO: squint source mapping
+
         const file = id.replace(/.jsx$/, "");
         const code = await fs.promises.readFile(file, "utf-8");
-        const compiled = compileString(code);
-        return { code: compiled, map: null };
+
+        const compiled_nc = await compileString(code);
+        return { code: compiled_nc.imports + compiled_nc.body + compiled_nc.exports, map: null };
       }
     },
     resolveId(id, importer, options) {
@@ -30,6 +32,7 @@ export default function viteSquint(opts = {}) {
         // absolutize the path, this makes it easier for load and other plugins
         // append .jsx so that other plugins can pick it up
         const absolutePath = path.resolve(dirname(importer), id);
+
         if (options.scan) {
           // Vite supports the concept of virtual modules, which are not direct
           // files on disk but dynamically generated contents that Vite and its
@@ -44,17 +47,33 @@ export default function viteSquint(opts = {}) {
         return absolutePath + ".jsx";
       }
     },
-    handleHotUpdate({file, server, modules }) {
+    handleHotUpdate({file, server, modules, timestamp }) {
       if (/\.cljs$/.test(file)) {
         // this needs to be the same id returned by resolveId this is what
         // vite uses as the modules identifier
-        const resolveId = file + ".jsx";
+
+        // for (let ending in [".jsx" ".mjs"]) {
+
+        // }
+            const resolveId = file + ".jsx";
+
+
         const module = server.moduleGraph.getModuleById(resolveId);
+        console.log("module", resolveId);
         if (module) {
           // invalidate dependants
           server.moduleGraph.onFileChange(resolveId);
           // hot reload
-          return [...modules, module ]
+            const invalidatedModules = new Set()
+          console.log( "r ", [...modules, module ]);
+          // module.isSelfAccepting = true;
+          // server.moduleGraph.invalidateModule(
+          //       module,
+          //             invalidatedModules,
+          //                   timestamp,
+          //                         true
+          //                             )
+          return [ ...modules, module ]
         }
         return modules;
       }
