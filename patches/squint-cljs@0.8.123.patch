@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 87e8f77f4f898086a9fda0689401144586380003..1a0d1644d8db50d1b0ea3c83d5865411e4e9d6da 100644
+--- a/package.json
++++ b/package.json
+@@ -54,6 +54,7 @@
+     "./src/squint/core.js": "./src/squint/core.js",
+     "./src/squint/set.js": "./src/squint/set.js",
+     "./src/squint/string.js": "./src/squint/string.js",
++    "./node-api.js": "./node-api.js",
+     "./src/squint/html.js": "./src/squint/html.js"
+   }
+ }
